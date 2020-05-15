@@ -103,11 +103,11 @@
 (defmethod library-name (library)
   (library-name (ensure-library library)))
 
-(defmethod open-library ((library library))
-  (cffi:load-foreign-library (library-name library)))
+(defmethod open-library ((library library) &key search-path)
+  (cffi:load-foreign-library (library-name library) :search-path search-path))
 
-(defmethod open-library (library)
-  (open-library (ensure-library library)))
+(defmethod open-library (library &key search-path)
+  (open-library (ensure-library library) :search-path search-path))
 
 (defmethod close-library ((library library))
   (cffi:close-foreign-library
