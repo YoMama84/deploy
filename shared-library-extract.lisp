@@ -25,6 +25,12 @@
 (defun file-name (path)
   (car (last (str:split "/" path))))
 
+(defun file-folder (full-file-path)
+  "Return the containing folder path for a file"
+  (subseq full-file-path 0
+          (- (length full-file-path) 1
+             (position #\/ (reverse full-file-path)))))
+
 (defun install-name (from to path)
   (uiop:run-program (list *install-name-tool* "-change"
                           from to path)))
@@ -55,11 +61,12 @@
              collect library)
      :test #'equal)))
 
-(defun process-library (library-path destination)
-  (loop for library in (library-dependency-tree library-path)
-        do (let ((destination-path (format nil "~a/~a" destination (file-name library))))
-             (copy-file library destination-path)
-             (install-names destination-path))))
+(defun process-library (library-path &optional destination)
+  (let ((destination (if destination destination (file-folder library-path))))
+    (loop for library in (library-dependency-tree library-path)
+          do (let ((destination-path (format nil "~a/~a" destination (file-name library))))
+               (copy-file library destination-path)
+               (install-names destination-path)))))
 
 (defun process-libraries (libraries destination)
   (mapcar (lambda (i) (process-library i destination)) libraries))
