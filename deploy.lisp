@@ -37,9 +37,11 @@
         (let ((target (make-pathname :directory (pathname-directory directory)
                                      :device (pathname-device directory)
                                      :host (pathname-host directory)
-                                     :defaults (library-path lib))))
+                                     :defaults (library-path lib)))
+              (library-file-name (file-namestring (library-path lib))))
           (unless (uiop:file-exists-p target)
             (status 1 "Copying library ~a" lib)
+            (pushnew (cons lib library-file-name) *foreign-libraries-to-reload* :test #'equal)
             (uiop:copy-file (library-path lib) target)))))))
 
 (define-hook (:build foreign-libraries most-negative-fixnum) ()
@@ -55,15 +57,17 @@
 
 (define-hook (:boot foreign-libraries most-positive-fixnum) ()
   (status 0 "Reloading foreign libraries.")
-  (flet ((maybe-load (lib)
+  (flet ((maybe-load (lib path)
            (let ((lib (ensure-library lib))
                  #+sbcl(sb-ext:*muffled-warnings* 'style-warning))
              (unless (or (library-open-p lib)
                          (library-dont-open-p lib))
                (status 1 "Loading foreign library ~a." lib)
-               (open-library lib)))))
-    (dolist (lib *foreign-libraries-to-reload*)
-      (maybe-load lib))))
+               (status 1 "Path: ~a" path)
+               (status 1 "CFFI: Foreign Library directories ~a" cffi:*foreign-library-directories*)
+               (cffi:load-foreign-library (format nil "~a/~a" (data-directory) path))))))
+    (dolist (foreign-lib *foreign-libraries-to-reload*)
+      (maybe-load (car foreign-lib) (cdr foreign-lib)))))
 
 (defun warmly-boot (system op)
   (let* ((dir (runtime-directory))
@@ -72,6 +76,7 @@
     (status 1 "Runtime directory is ~a" dir)
     (status 1 "Resource directory is ~a" data)
     (setf cffi:*foreign-library-directories* (list data dir))
+    (setf cffi:*darwin-framework-directories* (list data dir))
     (status 0 "Running boot hooks.")
     (run-hooks :boot :directory dir :system system :op op)))
 
@@ -141,10 +146,9 @@
   (run-hooks :load :system c :op o)
   (status 0 "Gathering system information.")
   (destructuring-bind (file data) (asdf:output-files o c)
-    (setf *foreign-libraries-to-reload* (remove-if-not #'library-open-p
-                                                       (remove-if #'library-dont-open-p (list-libraries))))
     (status 1 "Will load the following foreign libs on boot:
-      ~s" *foreign-libraries-to-reload*)
+      ~s" (remove-if-not #'library-open-p
+                         (remove-if #'library-dont-open-p (list-libraries))))
     (status 0 "Deploying files to ~a" data)
     (ensure-directories-exist file)
     (ensure-directories-exist data)
