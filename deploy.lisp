@@ -58,15 +58,15 @@
 
 (define-hook (:boot foreign-libraries most-positive-fixnum) ()
   (status 0 "Reloading foreign libraries.")
-  (flet ((maybe-load (lib path)
+  (flet ((maybe-load (lib file-name)
            (let ((lib (ensure-library lib))
                  #+sbcl(sb-ext:*muffled-warnings* 'style-warning))
              (unless (or (library-open-p lib)
                          (library-dont-open-p lib))
                (status 1 "Loading foreign library ~a." lib)
-               (status 1 "Path: ~a" path)
+               (status 1 "File Name: ~a" file-name)
                (status 1 "CFFI: Foreign Library directories ~a" cffi:*foreign-library-directories*)
-               (cffi:load-foreign-library (format nil "~a/~a" (data-directory) path))))))
+               (cffi:load-foreign-library (format nil "~a/~a" (data-directory) file-name))))))
     (dolist (foreign-lib *foreign-libraries-to-reload*)
       (maybe-load (car foreign-lib) (cdr foreign-lib)))))
 
