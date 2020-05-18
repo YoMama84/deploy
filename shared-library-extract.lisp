@@ -35,7 +35,7 @@
 
 (defun install-names (library)
   (format t "Install names for library ~a~%" library)
-  (install-id (format nil "@rpath/~a" (file-name library)) library)
+  (install-id (format nil "@loader_path/~a" (file-name library)) library)
   (loop for object in (object-tool library)
         if (copy-library-p object)
           do (install-name object (format nil "@loader_path/~a" (file-name object)) library)))
