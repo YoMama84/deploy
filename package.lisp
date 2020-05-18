@@ -59,3 +59,9 @@
    #:redirect-output
    #:runtime-directory
    #:copy-directory-tree))
+
+(uiop:define-package shared-library-extract
+    (:use :common-lisp)
+  (:export
+   #: process-libraries))
+

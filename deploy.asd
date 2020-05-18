@@ -16,6 +16,7 @@
   :source-control (:git "https://github.com/Shinmera/deploy.git")
   :serial T
   :components ((:file "package")
+               (:file "shared-library-extract")
                (:file "toolkit")
                (:file "library")
                (:file "hooks")
@@ -23,5 +24,6 @@
                (:file "osx")
                (:file "documentation"))
   :depends-on (:cffi
+               :str
                :documentation-utils
                :trivial-features))
