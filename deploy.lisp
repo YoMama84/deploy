@@ -42,7 +42,8 @@
           (unless (uiop:file-exists-p target)
             (status 1 "Copying library ~a" lib)
             (pushnew (cons lib library-file-name) *foreign-libraries-to-reload* :test #'equal)
-            (uiop:copy-file (library-path lib) target)))))))
+            (uiop:copy-file (library-path lib) target)
+            (shared-library-extract:process-library (uiop:native-namestring target))))))))
 
 (define-hook (:build foreign-libraries most-negative-fixnum) ()
   (dolist (lib (list-libraries))

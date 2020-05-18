@@ -24,6 +24,7 @@
                (:file "osx")
                (:file "documentation"))
   :depends-on (:cffi
+               :uiop
                :str
                :documentation-utils
                :trivial-features))
