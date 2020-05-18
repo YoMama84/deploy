@@ -63,3 +63,25 @@ If you're having trouble with an application that's already deployed, there's a 
 - `DEPLOY_REDIRECT_OUTPUT` if set to a file path, the output of all streams is redirected to this file.
 
 Particularly on Windows and OS X debugging can be an issue, as a GUI application will not get a standard output to write to. In that case, the above redirect might help. Alternatively, on Windows, you can build your binary with the feature flag `:deploy-console` present, which will force it to deploy as a console application.
+
+* Shared Library Extract
+
+Will recursively descend through shared libraries and copy them into a
+location if necessary. Will also use =install_name_tool= to update
+paths.
+
+* Example Usage:
+
+#+NAME: usage
+#+BEGIN_SRC lisp
+(process-libraries
+ (list
+  "/Source/Lisp/xyz/bin/xyz.app/Contents/Resources/libcairo.2.dylib"
+  "/Source/Lisp/xyz/bin/xyz.app/Contents/Resources/libcrypto.dylib")
+  "/Source/Lisp/xyz/bin/xyz.app/Contents/Resources")
+
+#+END_SRC
+
+In the function =process-libraries=, the first list is a list of files
+to scan, and the second string is a path of which to copy the shared
+libraries to. Please use absolute paths.
