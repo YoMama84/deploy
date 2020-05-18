@@ -6,7 +6,6 @@
 
 (in-package #:cl-user)
 (defpackage #:deploy
-  (:nicknames #:org.shirakumo.deploy)
   (:use #:cl)
   ;; deploy.lisp
   (:export

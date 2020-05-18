@@ -4,7 +4,7 @@
  Author: Nicolas Hafner <shinmera@tymoon.eu>
 |#
 
-(in-package #:org.shirakumo.deploy)
+(in-package #:deploy)
 
 (defparameter *system-source-directories*
   (list #+windows (or #+(or allegro clisp clozure cmucl gcl lispworks sbcl scl xcl)

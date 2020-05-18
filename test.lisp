@@ -6,11 +6,10 @@
 
 (in-package #:cl-user)
 (defpackage #:deploy-test
-  (:nicknames #:org.shirakumo.deploy.test)
   (:use #:cl)
   (:export
    #:start))
-(in-package #:org.shirakumo.deploy.test)
+(in-package #:deploy.test)
 
 (defun start ()
   (let* ((file (or (first (uiop:command-line-arguments))

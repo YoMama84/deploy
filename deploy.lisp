@@ -4,7 +4,7 @@
  Author: Nicolas Hafner <shinmera@tymoon.eu>
 |#
 
-(in-package #:org.shirakumo.deploy)
+(in-package #:deploy)
 
 (defvar *foreign-libraries-to-reload* ())
 

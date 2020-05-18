@@ -4,7 +4,7 @@
  Author: Nicolas Hafner <shinmera@tymoon.eu>
 |#
 
-(in-package #:org.shirakumo.deploy)
+(in-package #:deploy)
 
 (defparameter *info-plist-template*
   (merge-pathnames "Info.plist" (asdf:system-relative-pathname :deploy "Info.plist")))
