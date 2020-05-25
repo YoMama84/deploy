@@ -18,8 +18,8 @@
 
 (defmethod asdf:output-files ((o osx-app-deploy-op) (c asdf:system))
   (destructuring-bind (file dir) (call-next-method)
-    (values (list (merge-pathnames (format NIL "~a.app/Contents/MacOS/" (asdf:component-name c)) file)
-                  (merge-pathnames (format NIL "~a.app/Contents/Resources/" (asdf:component-name c)) dir))
+    (values (list (merge-pathnames (format NIL "~a.app/Contents/MacOS/" (asdf/system:component-build-pathname c)) file)
+                  (merge-pathnames (format NIL "~a.app/Contents/Resources/" (asdf/system:component-build-pathname c)) dir))
             T)))
 
 (define-hook (:deploy osx-app-plist) (directory system op)

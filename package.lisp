@@ -44,7 +44,7 @@
    #:close-library
    #:library-open-p
    #:define-library)
-  ;; osx.lisp
+  ;; darwin.lisp
   (:export
    #:*info-plist-template*
    #:osx-app-deploy-op

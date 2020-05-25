@@ -422,7 +422,7 @@ See LIBRARY-PATH
 See LIBRARY-DONT-OPEN-P
 See LIBRARY-DONT-DEPLOY-P"))
 
-;; osx.lisp
+;; darwin.lisp
 (docs:define-docs
   (variable *info-plist-template*
     "This variable holds a pathname pointing to the Info.plist template to use for OS X app bundles.
