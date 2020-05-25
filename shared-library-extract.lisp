@@ -31,6 +31,16 @@
           (- (length full-file-path) 1
              (position #\/ (reverse full-file-path)))))
 
+(defun library-versions (library-name)
+  "Return variations of a library version up to a major version. For
+  example, libxyz.1.0.dylib should return libxyz.1.dylib and
+  libxyz.dylib"
+  (let* ((split-library-name (str:split "." library-name))
+         (suffix (last split-library-name))
+         (split-library-name (butlast split-library-name)))
+    (loop for sublist on (reverse split-library-name)
+          collect (format nil "~{~a~^.~}" (append (reverse sublist) suffix)))))
+
 (defun install-name (from to path)
   (uiop:run-program (list *install-name-tool* "-change"
                           from to path)))
