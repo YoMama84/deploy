@@ -4,6 +4,7 @@
 
 (defvar *object-tool* "otool")
 (defvar *cp* "cp")
+(defvar *ln* "ln")
 (defvar *copyable-library-paths* (list "/opt/local/lib"))
 (defvar *install-name-tool* "install_name_tool")
 
@@ -18,11 +19,17 @@
 (defun copy-library-p (library-path)
   (find-if (lambda (i) (str:containsp i library-path)) *copyable-library-paths*))
 
+(defun symbolic-link (from to)
+  (format t "Symbolic link ~a to ~a" from to)
+  (unless (equal from to)
+    (uiop:run-program (list *ln* "-sf" from to) :ignore-error-status t)))
+
 (defun copy-file (from to)
   (format t "Copy file ~a to ~a~%" from to)
-  (uiop:run-program (list *cp* from to)))
+  (uiop:run-program (list *cp* "-n" from to) :ignore-error-status t))
 
 (defun file-name (path)
+  "Extract the file name from a file path."
   (car (last (str:split "/" path))))
 
 (defun file-folder (full-file-path)
@@ -72,11 +79,17 @@
      :test #'equal)))
 
 (defun process-library (library-path &optional destination)
-  (format t "Library Path ~a ~%" library-path)
+  "Copy library dependencies recursively, additionally make symlinks
+to major versions for a given library."
   (let ((destination (if destination destination (file-folder library-path))))
+    (format t "Library Path ~a, Destination ~a ~%" library-path destination)
+    (mapcar (lambda (i) (symbolic-link library-path (format nil "~a/~a" destination i))) 
+            (library-versions (file-name library-path)))
     (loop for library in (library-dependency-tree library-path)
           do (let ((destination-path (format nil "~a/~a" destination (file-name library))))
                (copy-file library destination-path)
+               (mapcar (lambda (i) (symbolic-link destination-path (format nil "~a/~a" destination i))) 
+                       (library-versions (file-name library)))
                (install-names destination-path)))))
 
 (defun process-libraries (libraries destination)
