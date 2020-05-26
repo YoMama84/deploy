@@ -20,8 +20,9 @@
   (find-if (lambda (i) (str:containsp i library-path)) *copyable-library-paths*))
 
 (defun symbolic-link (from to)
-  (format t "Symbolic link ~a to ~a" from to)
-  (unless (equal from to)
+  (format t "Symbolic link ~a to ~a ~%" from to)
+  ;; avoid overwriting the original file in a circulary symlink
+  (unless (equal from (file-name to))
     (uiop:run-program (list *ln* "-sf" from to) :ignore-error-status t)))
 
 (defun copy-file (from to)
@@ -83,12 +84,12 @@
 to major versions for a given library."
   (let ((destination (if destination destination (file-folder library-path))))
     (format t "Library Path ~a, Destination ~a ~%" library-path destination)
-    (mapcar (lambda (i) (symbolic-link library-path (format nil "~a/~a" destination i))) 
+    (mapcar (lambda (i) (symbolic-link (file-name library-path) (format nil "~a/~a" destination i)))
             (library-versions (file-name library-path)))
     (loop for library in (library-dependency-tree library-path)
           do (let ((destination-path (format nil "~a/~a" destination (file-name library))))
                (copy-file library destination-path)
-               (mapcar (lambda (i) (symbolic-link destination-path (format nil "~a/~a" destination i))) 
+               (mapcar (lambda (i) (symbolic-link (file-name destination-path) (format nil "~a/~a" destination i)))
                        (library-versions (file-name library)))
                (install-names destination-path)))))
 
