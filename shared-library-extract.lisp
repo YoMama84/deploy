@@ -26,7 +26,7 @@
 
 (defun copy-file (from to)
   (format t "Copy file ~a to ~a~%" from to)
-  (uiop:run-program (list *cp* "-n" from to) :ignore-error-status t))
+  (uiop:run-program (list *cp* from to) :ignore-error-status t))
 
 (defun file-name (path)
   "Extract the file name from a file path."
