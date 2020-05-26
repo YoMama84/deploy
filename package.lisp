@@ -63,6 +63,7 @@
 (uiop:define-package shared-library-extract
     (:use :common-lisp)
   (:export
+   #:process-executable
    #:process-libraries
    #:process-library))
 

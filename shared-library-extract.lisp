@@ -79,6 +79,10 @@
              collect library)
      :test #'equal)))
 
+(defun process-executable (executable-path &optional destination)
+  (install-names executable-path)
+  (process-library executable-path destination))
+
 (defun process-library (library-path &optional destination)
   "Copy library dependencies recursively, additionally make symlinks
 to major versions for a given library."
